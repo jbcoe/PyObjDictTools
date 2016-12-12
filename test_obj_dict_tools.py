@@ -29,6 +29,7 @@ def test_simple_class_to_dict():
 
 def test_simple_class_from_dict():
     d = {'__class__': 'Simple', 'name': 'foo', 'size': 100}
+    # FIXME: Explicitly passing in a module is undesirable. 
     s = from_dict(d, globals())
 
     assert isinstance(s, Simple)
