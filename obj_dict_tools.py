@@ -12,18 +12,21 @@ def to_dict(obj):
     raise Exception('unhandled type \'{}\''.format(type(obj).__name__))
 
 
-def from_dict(var):
-    if isinstance(var, dict) and var.has_key('__class__'):
-        cls = globals()[var['__class__']]
+def from_dict(var, m=globals()):
+    if isinstance(var, dict) and '__class__' in var:
+        cls = m[var['__class__']]
         if cls:
-            return cls._from_dict({k: from_dict(v) for k, v in var.items() if not k == '__class__'})
+            return cls._from_dict({k: from_dict(v, m) for k, v in var.items() if not k.startswith('_')})
     if isinstance(var, list):
-        return [from_dict(x) for x in var]
+        return [from_dict(x, m) for x in var]
     return var
 
 
 def dict_fields(attributes, klass=None):
     def wrapper(klass):
+        for a in attributes:
+            assert not a.startswith('_')
+
         def _from_dict(cls, d):
             return cls(**d)
 

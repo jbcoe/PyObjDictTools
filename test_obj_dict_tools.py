@@ -1,4 +1,5 @@
 from obj_dict_tools import *
+from nose.tools import raises
 
 
 @dict_fields(['name', 'size'])
@@ -24,6 +25,15 @@ def test_simple_class_to_dict():
     assert d['__class__'] == 'Simple'
     assert d['name'] == 'foo'
     assert d['size'] == 100
+
+
+def test_simple_class_from_dict():
+    d = {'__class__': 'Simple', 'name': 'foo', 'size': 100}
+    s = from_dict(d, globals())
+
+    assert isinstance(s, Simple)
+    assert s.name == 'foo'
+    assert s.size == 100
 
 
 def test_null_fields_to_dict():
@@ -60,3 +70,9 @@ def test_list_field_to_dict():
     assert d['second']['name'] == 'b'
     assert d['second']['size'] == 200
 
+
+@raises(Exception)
+def test_decorator_rejects_underscore_prefixes():
+    @dict_fields(['_p'])
+    class bad_attribute_defined:
+        pass

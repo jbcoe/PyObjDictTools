@@ -1,0 +1,13 @@
+sudo: false
+language: python
+
+matrix:
+  include:
+    - os: linux
+
+install:
+  - pip install nose
+
+script: 
+  - python -m nose -v .
+
